@@ -53,10 +53,13 @@ app.get('/api/users', function(req,res) {
 app.post('/api/users/:id/exercises', function(req, res) {
   var exercise = new Exercise({userId: req.params.id, description: req.body.description, duration: req.body.duration, date: req.body.date ? req.body.date : Date.now()});
   
-  exercise.save(function(err, data) {
-    if (err) return console.error(err);
-    res.json({ userId: data.userId, description: data.description, duration: data.duration, date: data.date})
-  });
+  User.findById({_id: exercise.userId}, function (err, user) {
+    if (err) return console.log(err);
+    exercise.save(function(err, data) {
+      if (err) return console.error(err);
+      res.json({ _id: data.userId, username: user.username, date: data.date, duration: data.duration, description: data.description })
+    });
+  });  
   
 });
 
