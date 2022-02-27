@@ -22,7 +22,15 @@ const userSchema = new Schema({
   username:  String
 });
 
+const exerciseSchema = new Schema({
+  userId: String,
+  description:  String,
+  duration: Number,
+  date: Date
+});
+
 let User = mongoose.model('User', userSchema);
+let Exercise = mongoose.model('Exercise', exerciseSchema);
 
 
 app.post('/api/users', function(req, res) {
@@ -40,6 +48,16 @@ app.get('/api/users', function(req,res) {
     if (err) return console.log(err);
     res.json(users)
   });  
+});
+
+app.post('/api/users/:id/exercises', function(req, res) {
+  var exercise = new Exercise({userId: req.params.id, description: req.body.description, duration: req.body.duration, date: req.body.date ? req.body.date : Date.now()});
+  
+  exercise.save(function(err, data) {
+    if (err) return console.error(err);
+    res.json({ userId: data.userId, description: data.description, duration: data.duration, date: data.date})
+  });
+  
 });
 
 
