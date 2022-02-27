@@ -57,7 +57,7 @@ app.post('/api/users/:id/exercises', function(req, res) {
     if (err) return console.log(err);
     exercise.save(function(err, data) {
       if (err) return console.error(err);
-      res.json({ _id: data.userId, username: user.username, date: data.date, duration: data.duration, description: data.description })
+      res.json({ _id: data.userId, username: user.username, date: data.date.toDateString(), duration: data.duration, description: data.description })
     });
   });  
   
