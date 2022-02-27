@@ -34,7 +34,7 @@ let Exercise = mongoose.model('Exercise', exerciseSchema);
 
 
 app.post('/api/users', function(req, res) {
-  var user = new User({username: req.body.username});
+  let user = new User({username: req.body.username});
 
   user.save(function(err, data) {
     if (err) return console.error(err);
@@ -51,7 +51,7 @@ app.get('/api/users', function(req,res) {
 });
 
 app.post('/api/users/:id/exercises', function(req, res) {
-  var exercise = new Exercise({userId: req.params.id, description: req.body.description, duration: req.body.duration, date: req.body.date ? req.body.date : Date.now()});
+  let exercise = new Exercise({userId: req.params.id, description: req.body.description, duration: req.body.duration, date: req.body.date ? req.body.date : Date.now()});
   
   User.findById({_id: exercise.userId}, function (err, user) {
     if (err) return console.log(err);
@@ -66,12 +66,19 @@ app.post('/api/users/:id/exercises', function(req, res) {
 app.get('/api/users/:id/logs', function(req,res) {
   User.findById({_id: req.params.id}, function (err, user) {
     if (err) return console.log(err);
-    var query = {userId: req.params.id}
+    let query = {userId: req.params.id}
     if(req.query.to)  query.date = {$lte: req.query.to}
     if(req.query.from)  query.date = {$gte: req.query.from}
     Exercise.find(query).limit(parseInt(req.query.limit)).exec((err, exercises) => {
       if (err) return console.log(err);
-      res.json({_id:req.params.id, username:user.username, count:exercises.count, log:exercises})
+      let exercisesMapped = exercises.map(ex => (
+        {
+          description:  ex.description,
+          duration: ex.duration,
+          date: ex.date.toDateString()
+        }
+      ))
+      res.json({_id:req.params.id, username:user.username, count:exercises.count, log:exercisesMapped})
     });
   });      
 });
