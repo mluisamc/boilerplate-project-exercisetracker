@@ -66,7 +66,10 @@ app.post('/api/users/:id/exercises', function(req, res) {
 app.get('/api/users/:id/logs', function(req,res) {
   User.findById({_id: req.params.id}, function (err, user) {
     if (err) return console.log(err);
-    Exercise.find({userId: req.params.id}).limit(parseInt(req.query.limit)).exec((err, exercises) => {
+    var query = {userId: req.params.id}
+    if(req.query.to)  query.date = {$lte: req.query.to}
+    if(req.query.from)  query.date = {$gte: req.query.from}
+    Exercise.find(query).limit(parseInt(req.query.limit)).exec((err, exercises) => {
       if (err) return console.log(err);
       res.json({_id:req.params.id, username:user.username, count:exercises.count, log:exercises})
     });
