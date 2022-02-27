@@ -78,7 +78,7 @@ app.get('/api/users/:id/logs', function(req,res) {
           date: ex.date.toDateString()
         }
       ))
-      res.json({_id:req.params.id, username:user.username, count:exercises.count, log:exercisesMapped})
+      res.json({_id:req.params.id, username:user.username, count:exercises.length, log:exercisesMapped})
     });
   });      
 });
